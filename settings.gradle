@@ -1,3 +1,3 @@
-rootProject.name='ZS-Jetpack'
+rootProject.name='KotlinMvvmJetpack'
 include ':app'
 include ':base-library'
