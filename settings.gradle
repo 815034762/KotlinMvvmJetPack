@@ -1,3 +1,4 @@
+include ':kotlinlib'
 rootProject.name='KotlinMvvmJetpack'
 include ':app'
 include ':base-library'
