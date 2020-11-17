@@ -2,6 +2,7 @@ package com.zs.zs_jetpack.ui.main.mine
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,9 +20,11 @@ import com.zs.zs_jetpack.event.LoginEvent
 import com.zs.zs_jetpack.event.LogoutEvent
 import com.zs.zs_jetpack.utils.CacheUtil
 import kotlinx.android.synthetic.main.fragment_mine.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import kotlin.system.measureTimeMillis
 
 
 /**
@@ -30,6 +33,8 @@ import org.greenrobot.eventbus.ThreadMode
  * @date 2020-05-14
  */
 class MineFragment : LazyVmFragment() {
+
+    var job: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,6 +46,39 @@ class MineFragment : LazyVmFragment() {
     }
 
     /**
+     * 显示消息
+     */
+    private fun showMessage(message: String) {
+        tvText.text = message
+    }
+
+    private suspend fun getMessageFromNetwork(text: String, delayTime: Int): String {
+        Log.e("coroutines", "=======执行getMessageFromNetWork=======" + delayTime)
+        var name = ""
+        // suspend里面调用的方法，也是被编译器用suspend关键字修饰的
+        withContext(Dispatchers.IO) {
+            for (i in 1..delayTime) {
+                // 这里模拟一个耗时操作
+                Thread.sleep(500)
+                Log.e("coroutines","${delayTime}-----------------------${i}")
+            }
+        }
+        name = text
+        return name
+    }
+
+    private suspend fun intValue1():Int {
+        delay(1000)
+        return 1
+    }
+
+    private suspend fun intValue2():Int {
+        delay(2000)
+        return 2
+    }
+
+
+    /**
      * 用户积分信息
      */
     private var integralBean: IntegralBean? = null
@@ -49,6 +87,27 @@ class MineFragment : LazyVmFragment() {
 
     override fun initViewModel() {
         mineVM = getFragmentViewModel(MineVM::class.java)
+
+        val elapsedTime = measureTimeMillis {
+//            val value1 = intValue1()
+//            val value2 = intValue2()
+//            println("the result is ${value1 + value2}")
+        }
+
+//        job = GlobalScope.launch(Dispatchers.Main) {
+//            // 执行这一句之后，launch之后就只能执行一次
+////            job?.cancel()
+//            // 下面方法都是顺序执行的
+//            var name = getMessageFromNetwork("Name1", 100)
+//            showMessage(name)
+//            Log.e("coroutines", "=======Name1=======" + name)
+//            var name1 = getMessageFromNetwork("Name2", 10000)
+//            showMessage(name1)
+//            Log.e("coroutines", "=======Name2=======" + name1)
+//            var name2 = getMessageFromNetwork("Name3", 10)
+//            showMessage(name2)
+//            Log.e("coroutines", "=======name2=======" + name2)
+//        }
     }
 
     override fun observe() {
@@ -91,8 +150,17 @@ class MineFragment : LazyVmFragment() {
 
     override fun onClick() {
         setNoRepeatClick(
-            ivHead, tvName, tvId, llHistory, llRanking
-            , clIntegral, clCollect, clArticle, clWebsite, clSet,clV2ex
+            ivHead,
+            tvName,
+            tvId,
+            llHistory,
+            llRanking,
+            clIntegral,
+            clCollect,
+            clArticle,
+            clWebsite,
+            clSet,
+            clV2ex
         ) {
             when (it.id) {
                 //头像
@@ -182,5 +250,11 @@ class MineFragment : LazyVmFragment() {
         mineVM?.id?.set("---")
         mineVM?.rank?.set("0")
         mineVM?.internal?.set("0")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 取消协程
+        job?.cancel()
     }
 }

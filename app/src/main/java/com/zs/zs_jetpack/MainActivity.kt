@@ -17,6 +17,7 @@ import com.zs.zs_jetpack.play.bean.AudioBean
 import com.zs.zs_jetpack.ui.MainFragment
 import com.zs.zs_jetpack.ui.play.collect.CollectAudioBean
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch

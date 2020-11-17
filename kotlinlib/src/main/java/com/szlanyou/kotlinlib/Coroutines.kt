@@ -1,6 +1,6 @@
 package com.szlanyou.kotlinlib
 
-import kotlinx.coroutines.*
+//import kotlinx.coroutines.*
 
 
 fun main() {
